@@ -13,14 +13,19 @@ android {
 
     defaultConfig {
         minSdkVersion android_min_version
-//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 }
 
 dependencies {
     // Koin
-    api project(":koin-core")
-    testImplementation project(":koin-test")
+    compile project(":koin-core")
+    testCompile project(":koin-test")
+    testCompile "org.mockito:mockito-inline:$mockito_version"
 }
 
 apply from: '../gradle/publish-android.gradle'

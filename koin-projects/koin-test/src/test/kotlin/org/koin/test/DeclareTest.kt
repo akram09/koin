@@ -5,9 +5,9 @@ import org.junit.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.logger.Level
-import org.koin.test.mock.declare
+import org.koin.test.mock.declareModule
 
-class DeclareTest : KoinTest {
+class DeclareTest : AutoCloseKoinTest() {
 
     @Test
     fun `declare on the fly with KoinTest`() {
@@ -21,7 +21,7 @@ class DeclareTest : KoinTest {
         } catch (e: Exception) {
         }
 
-        declare {
+        declareModule {
             single { Simple.ComponentA() }
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.koin.android.scope
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
-import org.koin.core.KoinApplication.Companion.logger
 import org.koin.core.KoinComponent
 import org.koin.core.scope.Scope
 
@@ -39,7 +38,7 @@ class ScopeObserver(val event: Lifecycle.Event, val target: Any, val scope: Scop
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
         if (event == Lifecycle.Event.ON_STOP) {
-            logger.debug("$target received ON_STOP")
+            scope._koin._logger.debug("$target received ON_STOP")
             scope.close()
         }
     }
@@ -50,7 +49,7 @@ class ScopeObserver(val event: Lifecycle.Event, val target: Any, val scope: Scop
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         if (event == Lifecycle.Event.ON_DESTROY) {
-            logger.debug("$target received ON_DESTROY")
+            scope._koin._logger.debug("$target received ON_DESTROY")
             scope.close()
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import org.koin.core.qualifier.Qualifier
  * @param override - allow definition override
  */
 inline fun <reified T : ViewModel> Module.viewModel(
-        qualifier: Qualifier? = null,
-        override: Boolean = false,
-        noinline definition: Definition<T>
+    qualifier: Qualifier? = null,
+    override: Boolean = false,
+    noinline definition: Definition<T>
 ): BeanDefinition<T> {
     val beanDefinition = factory(qualifier, override, definition)
     beanDefinition.setIsViewModel()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.koin.core.logger.Logger
 import org.koin.core.logger.MESSAGE
 
 /**
- * Logger that uses Android Log.i
+ * Logger that uses the native Android Logger
  *
  * @author - Arnaud GIULIANI
  */
@@ -30,12 +30,12 @@ class AndroidLogger(level: Level = Level.INFO) : Logger(level) {
 
     override fun log(level: Level, msg: MESSAGE) {
         if (this.level <= level) {
-            LogOnLevel(msg)
+            logOnLevel(msg, level)
         }
     }
 
-    private fun LogOnLevel(msg: MESSAGE) {
-        when (this.level) {
+    private fun logOnLevel(msg: MESSAGE, level: Level) {
+        when (level) {
             Level.DEBUG -> Log.d(KOIN_TAG, msg)
             Level.INFO -> Log.i(KOIN_TAG, msg)
             Level.ERROR -> Log.e(KOIN_TAG, msg)

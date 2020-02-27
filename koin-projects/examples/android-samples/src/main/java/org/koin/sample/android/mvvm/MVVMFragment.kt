@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.koin.android.ext.android.getKoin
-import org.koin.android.scope.currentScope
+import org.koin.android.scope.lifecycleScope
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -21,9 +21,13 @@ class MVVMFragment : Fragment() {
 
     val sharedViewModel: SimpleViewModel by sharedViewModel { parametersOf(ID) }
     val simpleViewModel: SimpleViewModel by viewModel { parametersOf(ID) }
-    val session: Session? by lazy { activity?.currentScope?.get<Session>() }
+    val session: Session? by lazy { activity?.lifecycleScope?.get<Session>() }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.mvvm_fragment, container, false)
     }
 
@@ -34,5 +38,8 @@ class MVVMFragment : Fragment() {
         assertEquals((activity as MVVMActivity).simpleViewModel, sharedViewModel)
 
         assertEquals(session, getKoin().getProperty("session"))
+
+        assertNotEquals(simpleViewModel, (activity as MVVMActivity).simpleViewModel)
+        assertEquals(sharedViewModel, (activity as MVVMActivity).simpleViewModel)
     }
 }

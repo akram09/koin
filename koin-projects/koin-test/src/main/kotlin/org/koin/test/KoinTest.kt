@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,4 +45,4 @@ inline fun <reified T> KoinTest.get(
 inline fun <reified T> KoinTest.inject(
     qualifier: Qualifier? = null,
     noinline parameters: ParametersDefinition? = null
-): Lazy<T> = lazy { get<T>(qualifier, parameters) }
+): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) { get<T>(qualifier, parameters) }

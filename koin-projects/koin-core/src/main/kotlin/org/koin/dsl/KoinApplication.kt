@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ typealias KoinAppDeclaration = KoinApplication.() -> Unit
  * @author Arnaud Giuliani
  */
 fun koinApplication(appDeclaration: KoinAppDeclaration): KoinApplication {
-    val koinApplication = KoinApplication.create()
+    val koinApplication = KoinApplication.init()
     appDeclaration(koinApplication)
+    koinApplication.koin.createContextIfNeeded()
     return koinApplication
 }

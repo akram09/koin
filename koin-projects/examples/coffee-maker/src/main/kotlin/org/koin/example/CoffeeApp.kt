@@ -2,8 +2,9 @@ package org.koin.example
 
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.inject
-import kotlin.system.measureTimeMillis
+import org.koin.core.time.measureDuration
 
 class CoffeeApp : KoinComponent {
 
@@ -16,9 +17,8 @@ fun main() {
         modules(listOf(coffeeAppModule))
     }
     val coffeeShop = CoffeeApp()
-    val appDuration = measureTimeMillis {
+    measureDuration("Got Coffee") {
         coffeeShop.maker.brew()
     }
-
-    println("executed in $appDuration ms")
+    stopKoin()
 }

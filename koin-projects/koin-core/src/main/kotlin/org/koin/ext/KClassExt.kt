@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import kotlin.reflect.KClass
  * Give full class qualifier
  */
 fun KClass<*>.getFullName(): String {
-    return classNames[this] ?: saveFullName()
+    return classNames[this] ?: saveCache()
 }
 
-private fun KClass<*>.saveFullName(): String {
+fun KClass<*>.saveCache(): String {
     val name = this.java.name
     classNames[this] = name
     return name

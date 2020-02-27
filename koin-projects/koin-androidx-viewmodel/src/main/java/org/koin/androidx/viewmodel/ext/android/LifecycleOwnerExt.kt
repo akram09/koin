@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 package org.koin.androidx.viewmodel.ext.android
 
 import android.content.ComponentCallbacks
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
 import org.koin.android.ext.android.getKoin
-import org.koin.androidx.viewmodel.ViewModelParameters
-import org.koin.androidx.viewmodel.getViewModel
+import org.koin.androidx.viewmodel.koin.getViewModel
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 import kotlin.reflect.KClass
@@ -31,63 +33,42 @@ import kotlin.reflect.KClass
  * @author Arnaud Giuliani
  */
 
-/**
- * Lazy get a viewModel instance
- *
- * @param qualifier - Koin BeanDefinition qualifier (if have several ViewModel beanDefinition of the same type)
- * @param parameters - parameters to pass to the BeanDefinition
- * @param clazz
- */
 fun <T : ViewModel> LifecycleOwner.viewModel(
-        clazz: KClass<T>,
-        qualifier: Qualifier? = null,
-        parameters: ParametersDefinition? = null
-): Lazy<T> = lazy { getViewModel(clazz, qualifier, parameters) }
+    clazz: KClass<T>,
+    qualifier: Qualifier? = null,
+    parameters: ParametersDefinition? = null
+): Lazy<T> {
+    return lazy(LazyThreadSafetyMode.NONE) { getViewModel(clazz, qualifier, parameters) }
+}
 
-/**
- * Lazy getByClass a viewModel instance
- *
- * @param qualifier - Koin BeanDefinition qualifier (if have several ViewModel beanDefinition of the same type)
- * @param parameters - parameters to pass to the BeanDefinition
- */
 inline fun <reified T : ViewModel> LifecycleOwner.viewModel(
-        qualifier: Qualifier? = null,
-        noinline parameters: ParametersDefinition? = null
-): Lazy<T> = lazy { getViewModel<T>(qualifier, parameters) }
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null
+): Lazy<T> {
+    return lazy(LazyThreadSafetyMode.NONE) { getViewModel(T::class, qualifier, parameters) }
+}
 
-/**
- * Get a viewModel instance
- *
- * @param qualifier - Koin BeanDefinition qualifier (if have several ViewModel beanDefinition of the same type)
- * @param parameters - parameters to pass to the BeanDefinition
- */
 inline fun <reified T : ViewModel> LifecycleOwner.getViewModel(
-        qualifier: Qualifier? = null,
-        noinline parameters: ParametersDefinition? = null
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null
 ): T {
     return getViewModel(T::class, qualifier, parameters)
 }
 
-private fun LifecycleOwner.getKoin() = (this as ComponentCallbacks).getKoin()
-
-/**
- * Lazy getByClass a viewModel instance
- *
- * @param clazz - Class of the BeanDefinition to retrieve
- * @param qualifier - Koin BeanDefinition qualifier (if have several ViewModel beanDefinition of the same type)
- * @param parameters - parameters to pass to the BeanDefinition
- */
 fun <T : ViewModel> LifecycleOwner.getViewModel(
-        clazz: KClass<T>,
-        qualifier: Qualifier? = null,
-        parameters: ParametersDefinition? = null
+    clazz: KClass<T>,
+    qualifier: Qualifier? = null,
+    parameters: ParametersDefinition? = null
 ): T {
-    return getKoin().getViewModel(
-            ViewModelParameters(
-                    clazz,
-                    this@getViewModel,
-                    qualifier,
-                    parameters = parameters
-            )
-    )
+    return getKoin().getViewModel(this, clazz, qualifier, parameters)
 }
+
+fun LifecycleOwner.getViewModelStore(): ViewModelStore {
+    return when (this) {
+        is FragmentActivity -> this.viewModelStore
+        is Fragment -> this.viewModelStore
+        else -> error("LifecycleOwner is not either FragmentActivity nor Fragment")
+    }
+}
+
+private fun LifecycleOwner.getKoin() = (this as ComponentCallbacks).getKoin()

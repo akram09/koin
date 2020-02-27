@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */package org.koin.core.time
 
+import kotlin.time.ExperimentalTime
+import kotlin.time.MonoClock
+
 /**
  * Measure functions
  *
@@ -23,18 +26,34 @@
 /**
  * Measure code execution
  */
-fun measureDurationOnly(code: () -> Unit): Double {
-    val start = System.nanoTime()
+@UseExperimental(ExperimentalTime::class)
+fun measureDuration(code: () -> Unit): Double {
+    val clock = MonoClock
+    val mark = clock.markNow()
     code()
-    return (System.nanoTime() - start) / 1000000.0
+    return mark.elapsedNow().inMilliseconds
+}
+
+@UseExperimental(ExperimentalTime::class)
+fun measureDuration(message: String, code: () -> Unit) {
+    val time = measureDuration(code)
+    println("$message - $time ms")
 }
 
 /**
  * Measure code execution and get result
  */
-fun <T> measureDuration(code: () -> T): Pair<T, Double> {
-    val start = System.nanoTime()
+@UseExperimental(ExperimentalTime::class)
+fun <T> measureDurationForResult(code: () -> T): Pair<T, Double> {
+    val clock = MonoClock
+    val mark = clock.markNow()
     val result = code()
-    val duration = (System.nanoTime() - start) / 1000000.0
-    return Pair(result, duration)
+    return Pair(result, mark.elapsedNow().inMilliseconds)
+}
+
+@UseExperimental(ExperimentalTime::class)
+fun <T> measureDurationForResult(message: String, code: () -> T): T {
+    val (result, time) = measureDurationForResult(code)
+    println("$message - $time ms")
+    return result
 }

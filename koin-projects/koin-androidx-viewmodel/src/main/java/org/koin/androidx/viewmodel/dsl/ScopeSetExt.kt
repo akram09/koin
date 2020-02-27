@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ package org.koin.androidx.viewmodel.dsl
 import androidx.lifecycle.ViewModel
 import org.koin.core.definition.BeanDefinition
 import org.koin.core.definition.Definition
-import org.koin.core.definition.DefinitionFactory
-import org.koin.core.definition.Options
-import org.koin.core.error.DefinitionOverrideException
 import org.koin.core.qualifier.Qualifier
-import org.koin.dsl.ScopeSet
+import org.koin.dsl.ScopeDSL
 
 /**
  * ViewModel DSL Extension
@@ -33,18 +30,12 @@ import org.koin.dsl.ScopeSet
  * @param qualifier - definition qualifier
  * @param override - allow definition override
  */
-inline fun <reified T : ViewModel> ScopeSet.viewModel(
+inline fun <reified T : ViewModel> ScopeDSL.viewModel(
         qualifier: Qualifier? = null,
         override: Boolean = false,
         noinline definition: Definition<T>
 ): BeanDefinition<T> {
-    val beanDefinition = DefinitionFactory.createFactory(qualifier, this.qualifier, definition)
-    declareDefinition(beanDefinition, Options(false, override))
+    val beanDefinition = factory(qualifier, override, definition)
     beanDefinition.setIsViewModel()
-    if (!definitions.contains(beanDefinition)) {
-        definitions.add(beanDefinition)
-    } else {
-        throw DefinitionOverrideException("Can't add definition $beanDefinition for scope ${this.qualifier} as it already exists")
-    }
     return beanDefinition
 }
